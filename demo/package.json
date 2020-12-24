@@ -4,9 +4,9 @@
   "description": "",
   "private": true,
   "scripts": {
-    "build": "webpack",
+    "build": "webpack --config webpack.prod.js",
     "watch": "webpack --watch",
-    "start": "webpack serve --compress --progress --color --config webpack.config.js"
+    "start": "webpack serve --open --compress --progress --color --config webpack.dev.js"
   },
   "keywords": [],
   "author": "",
@@ -19,10 +19,10 @@
     "style-loader": "^2.0.0",
     "webpack": "^5.1.0",
     "webpack-cli": "^4.0.0",
-    "webpack-dev-server": "^3.11.0"
+    "webpack-dev-server": "^3.11.0",
+    "webpack-merge": "^5.7.3"
   },
   "dependencies": {
-    "loadash": "^1.0.0",
     "lodash": "^4.17.20"
   }
 }

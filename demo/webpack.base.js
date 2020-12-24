@@ -4,7 +4,7 @@
  * @Author: wy
  * @Date: 2020-12-22 11:01:03
  * @LastEditors: wy
- * @LastEditTime: 2020-12-22 16:19:45
+ * @LastEditTime: 2020-12-24 10:40:55
  */
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
@@ -14,22 +14,22 @@ const webpack = require('webpack');
 
 module.exports = {
     entry: {
-        app: './src/index.js',
-        // print: './src/print.js'
+        app: {
+            import: './src/index.js',
+            // dependOn: 'shared',
+        },
+        // print: {
+        //     import: './src/print.js',
+        //     dependOn: 'shared',
+        // },
+        // shared: 'lodash',
     },
-    devtool: 'inline-source-map', // source-map
     /*
         注意：webpack 5 最新版本 添加webpack-dev-server插件会报模块找不到问题
         fix issue link https://github.com/webpack/webpack-cli/issues/1948
     */ 
-    devServer: {
-        port: '8899',
-        contentBase: './dist',
-        compress: true,
-        hot: true
-    },
     output: {
-        filename: '[name].bundle.js',
+        filename: '[name].[contenthash].js',
         path: path.resolve(__dirname, 'dist')
     },
     plugins: [
@@ -37,10 +37,24 @@ module.exports = {
         new HtmlWebpackPlugin({
             title: 'Output Management'
         }),
-        // TODO: NamedModulesPlugin模块在v4已经废弃，由optimization.namedModules代替，待修改
-        new webpack.NamedModulesPlugin(),
+        // NamedModulesPlugin模块在v4已经废弃，由optimization.namedModules代替
+        // new webpack.NamedModulesPlugin(),
         new webpack.HotModuleReplacementPlugin()
     ],
+    optimization: {
+        moduleIds: 'deterministic', // 保持vendors的ids在每次build完不变
+        runtimeChunk: 'single', // 缓存优化策略，命中浏览器到长缓存机制
+        splitChunks: { // 代码分割，提取第三方库到runtime，
+            // chunks: 'all'
+            cacheGroups: {
+                vendor: {
+                    test: /[\\/]node_modules[\\/]/,
+                    name: 'vendors',
+                    chunks: 'all',
+                }
+            }
+        }
+    },
     /**
      *  loader
      *  test: 需要处理的文件
